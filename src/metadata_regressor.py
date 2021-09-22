@@ -54,22 +54,24 @@ if __name__ == "__main__":
         #X[-1] = pd.concat([X[-1], return_mood_features(split)], axis=1)
         if "OPENMINDEDNESS_Z" in metadata[split]:
             y.append(metadata[split][["OPENMINDEDNESS_Z", "CONSCIENTIOUSNESS_Z", "EXTRAVERSION_Z", "AGREEABLENESS_Z", "NEGATIVEEMOTIONALITY_Z"]])
-    print(metadata[SETS.val].columns)
     # pd.DataFrame(X[0]).to_csv("../features/all_metadata_train.csv", index=False)
     # pd.DataFrame(X[1]).to_csv("../features/all_metadata_val.csv", index=False)
     # pd.DataFrame(X[2]).to_csv("../features/all_metadata_test.csv", index=False)
 
-    train = metadata[SETS.train]
-    grid_search = GridSearchCV(estimator=RandomForestRegressor(random_state=42), param_grid=rf_tuned_params,
+    train = pd.concat([X[0], X[1]])
+    y_train = pd.concat([y[0], y[1]])
+    test = X[2]
+    grid_search = GridSearchCV(estimator=RandomForestRegressor(), param_grid=rf_tuned_params,
                                cv=3, n_jobs=-1, verbose=1, scoring='neg_mean_squared_error')
-    print("RF training will start...",  X[0].shape)
-    grid_search.fit(X[0], y[0])
+    print("RF training will start...",  train.shape)
+    grid_search.fit(train, y_train)
     rf = grid_search.best_estimator_
     print("Optimal paremeters of RF regressor: ", grid_search.best_params_)
     print("Out-of-bag score is: ", rf.oob_score_)
 
-    preds_df = pd.DataFrame(rf.predict(X[1]), columns=["OPENMINDEDNESS_Z", "CONSCIENTIOUSNESS_Z", "EXTRAVERSION_Z", "AGREEABLENESS_Z", "NEGATIVEEMOTIONALITY_Z"])
-    preds_df = pd.concat([metadata[SETS.val]["ID"], preds_df], axis=1).rename(columns={"ID": "Participant ID"})
+    preds_df = pd.DataFrame(rf.predict(test), columns=["OPENMINDEDNESS_Z", "CONSCIENTIOUSNESS_Z", "EXTRAVERSION_Z", "AGREEABLENESS_Z", "NEGATIVEEMOTIONALITY_Z"])
+    preds_df = pd.concat([metadata[SETS.test]["ID"], preds_df], axis=1).rename(columns={"ID": "Participant ID"})
+
     preds_df.to_csv("../predictions/predictions.csv", index=None)
-    print("Predictions on test set are as follows:", preds_df)
-    print("Predictions on test set are saved in the following file (predictions/predictions.csv)")
+    print("Warning: since random_state is not set to an integer, predictions are slightly different for each run. Test set predictions are as follows:", preds_df)
+    print("Predictions on test set are saved in the following file (/tmp/predictions.csv)")
