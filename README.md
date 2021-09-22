@@ -16,5 +16,5 @@
  Please replace it with any other location that you want to keep output file. ``
 
 ```javascript
-sudo docker run  -v /tmp:/predictions -it gizemsogancioglu/metadata_img:v1
+sudo docker run  -v /tmp:/predictions -it gizemsogancioglu/metadata_img:latest
 ```
