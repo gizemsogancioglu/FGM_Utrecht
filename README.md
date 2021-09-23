@@ -7,9 +7,10 @@
     .
     ├── src                         # source code folder. 
     │   ├── metadata_regressor.py   # Main module, training Random Forest regressor with metadata features.  
-    │   ├── udiva.py  # Reading the dataset and doing preprocessing.
-    │   
-    └── predictions                 # Matlab project for the arousal prediction [0-2] of the elderly speech data. Please see arousal/README.md for the details. 
+    │   ├── udiva.py                # Reading the dataset and doing preprocessing.
+    ├── data                        # contains metadata information (gender, age, education) and big-5 personality scores of participants for training, validation and test set.    
+    ├── features                    # contains feature files.
+    └── predictions                 # contains predictions (big-5 personality scores of the test set) by metadata regressor.
 
 # Running the project 
 `` Note: Prediction results, which are saved in predictions folder, are mounted to /tmp folder locally.
